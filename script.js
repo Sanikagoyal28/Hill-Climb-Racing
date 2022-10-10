@@ -20,33 +20,39 @@ function land(x) {
 }
 
 /*CAR*/
-let cx = canvas.getContext("2d");
 let img = new Image();
+
 let carMove = new (function () {
   this.car = new Image();
   this.car.src = "images/car.png";
-  let x = 0;
-  let y = 0;
-  let ys = 0;
+  this.x = canvas.width / 2 - 100;
+  this.y = 0;
+  this.ys = 0;
   this.cdraw = function () {
-    let d = canvas.height + 65 - img.height - land(this.x + position);
-    if (d > y)
-      // else y += ys;
-      cx.translate(x, y);
-    cx.drawImage(this.car, 50, 5);
+    let d = canvas.height - land(this.x + position);
+    if (d - 100 > this.y) this.ys += 0.1;
+    else {
+      this.y = d - 100;
+      this.ys = d - this.y - 100;
+    }
+    this.y += this.ys;
+    c.save();
+    c.translate(this.x, this.y);
+    c.drawImage(this.car, 10, 0, 150, 150);
+    c.restore();
   };
 })();
 
 let position = 0;
 function animate() {
   c.fillRect(0, 0, canvas.width, canvas.height);
-
   carMove.cdraw();
 
   img.src = "images/track.png";
   position++;
   for (let i = 0; i < canvas.width; i++)
-    c.drawImage(img, i, canvas.height + 65 - img.height - land(i + position));
+    c.drawImage(img, i, canvas.height - land(i + position));
+
   requestAnimationFrame(animate);
 }
 
